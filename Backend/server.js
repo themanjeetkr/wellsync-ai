@@ -2,7 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 require("dotenv").config();
-
+const paymentRoutes = require("./routes/paymentRoutes");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/AuthRoutes");
 const journalRoutes = require("./routes/journalRoutes");
@@ -29,6 +29,7 @@ app.get("/api", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/journals", journalRoutes);
 app.use("/api/meals", mealRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Start server
 app.listen(PORT, () => {
