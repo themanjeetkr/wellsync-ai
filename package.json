@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "dev": "npm --prefix Frontend run dev --"
+  },
   "dependencies": {
     "razorpay": "^2.9.8"
   }

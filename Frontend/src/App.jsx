@@ -13,6 +13,7 @@ import JournalDetail from "./pages/JournalDetail";
 import Insights from "./pages/Insight";
 import Settings from "./pages/Setting";
 import NutritionAnalyzer from "./pages/NutritionAnalyzer";
+import Billing from "./pages/Billing";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/journals/:id/edit" element={<ProtectedRoute><JournalEditor /></ProtectedRoute>} />
             <Route path="/insights" element={<ProtectedRoute><Insights /></ProtectedRoute>} />
             <Route path="/nutrition" element={<ProtectedRoute><NutritionAnalyzer /></ProtectedRoute>} />
+            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
             {/* Fallback */}
