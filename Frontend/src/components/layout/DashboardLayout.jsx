@@ -7,11 +7,12 @@ import Navbar from "./Navbar";
 
 function MobileBottomNav() {
   const navigate = useNavigate();
+  const mobileNavItems = navItems.filter(({ to }) => to !== "/settings");
 
   return (
     <nav className="mobile-bottom-nav lg:hidden" aria-label="Primary mobile navigation">
       <div className="mobile-bottom-nav-inner">
-        {navItems.slice(0, 2).map(({ to, icon, label, shortLabel }) => (
+        {mobileNavItems.slice(0, 2).map(({ to, icon, label, shortLabel }) => (
           <NavLink
             key={to}
             to={to}
@@ -33,7 +34,7 @@ function MobileBottomNav() {
           <PenLine size={20} />
         </button>
 
-        {navItems.slice(2).map(({ to, icon, label, shortLabel }) => (
+        {mobileNavItems.slice(2).map(({ to, icon, label, shortLabel }) => (
           <NavLink
             key={to}
             to={to}
