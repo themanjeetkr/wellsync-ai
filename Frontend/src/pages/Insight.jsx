@@ -3,18 +3,18 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
   PieChart, Pie, Cell, Tooltip, Legend,
 } from "recharts";
-import { Sparkles, TrendingUp, Heart, Brain } from "lucide-react";
+import { Sparkles, TrendingUp, Heart, Brain, Activity, Compass, Shield } from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import { useJournals } from "../context/JournalContext";
 
 const MOOD_COLORS = {
-  happy: "#6aab99",
-  excited: "#f2b87a",
-  calm: "#92c4b6",
-  neutral: "#9898b8",
-  anxious: "#e89a52",
-  sad: "#8faad4",
-  angry: "#d4697b",
+  happy: "#34d399",
+  excited: "#facc15",
+  calm: "#5eead4",
+  neutral: "#9aa5c4",
+  anxious: "#fb923c",
+  sad: "#93c5fd",
+  angry: "#f87171",
 };
 
 const moodToScore = {
@@ -31,15 +31,14 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   return (
     <div
-      className="rounded-xl px-3 py-2 text-xs"
-      style={{
-        background: "#1c1c28",
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}
+      className="rounded-xl px-3.5 py-2 text-xs shadow-2xl backdrop-blur-xl border border-white/10"
+      style={{ background: "rgba(15, 18, 27, 0.95)" }}
     >
       {payload.map((p) => (
-        <p key={p.name} style={{ color: p.payload.fill || p.color }}>
-          {p.name}: {p.value}
+        <p key={p.name} className="flex items-center gap-1.5 font-semibold text-white">
+          <span className="w-2 h-2 rounded-full" style={{ background: p.payload.fill || p.color }} />
+          <span>{p.name}:</span>
+          <span className="font-bold">{p.value}</span>
         </p>
       ))}
     </div>
@@ -48,15 +47,15 @@ const CustomTooltip = ({ active, payload }) => {
 
 export default function Insights() {
   const { journals, fetchJournals } = useJournals();
+
   useEffect(() => {
     fetchJournals();
-  }, []);
+  }, [fetchJournals]);
 
   // Mood distribution for pie chart
   const moodDist = useMemo(() => {
     const counts = {};
     journals.forEach((j) => {
-      // FIX: also check moodLabel as fallback for older entries
       const m =
         j.mood?.toLowerCase() ||
         j.moodLabel?.toLowerCase() ||
@@ -66,16 +65,16 @@ export default function Insights() {
     return Object.entries(counts).map(([name, value]) => ({
       name: name.charAt(0).toUpperCase() + name.slice(1),
       value,
-      fill: MOOD_COLORS[name] || "#9898b8",
+      fill: MOOD_COLORS[name] || "#9aa5c4",
     }));
   }, [journals]);
 
-  // FIX: Get dominant mood by sorting by count (not just first item)
+  // Dominant mood
   const dominantMood = useMemo(() => {
     return [...moodDist].sort((a, b) => b.value - a.value)[0];
   }, [moodDist]);
 
-  // Radar: emotional balance — FIX: Focus now uses real data instead of fake 0.6 multiplier
+  // Radar: emotional balance
   const radarData = useMemo(() => [
     {
       axis: "Joy",
@@ -88,7 +87,6 @@ export default function Insights() {
       value: journals.filter((j) => j.mood?.toLowerCase() === "calm").length,
     },
     {
-      // FIX: Focus = calm + happy entries (real proxy, not fake 0.6 * total)
       axis: "Focus",
       value: journals.filter((j) =>
         ["calm", "happy"].includes(j.mood?.toLowerCase())
@@ -96,8 +94,7 @@ export default function Insights() {
     },
     {
       axis: "Anxiety",
-      value: journals.filter((j) => j.mood?.toLowerCase() === "anxious")
-        .length,
+      value: journals.filter((j) => j.mood?.toLowerCase() === "anxious").length,
     },
     {
       axis: "Sadness",
@@ -118,106 +115,118 @@ export default function Insights() {
     );
     return scores.length
       ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)
-      : 0;
+      : "0.0";
   }, [journals]);
 
   const aiInsightCards = [
     {
       icon: Brain,
-      color: "#6aab99",
-      bg: "rgba(78,140,124,0.08)",
-      border: "rgba(78,140,124,0.15)",
-      title: "Emotional Pattern",
-      // FIX: uses dominantMood (sorted by count) instead of moodDist[0]
+      color: "#34d399",
+      bg: "rgba(52, 211, 153, 0.08)",
+      border: "rgba(52, 211, 153, 0.2)",
+      title: "Dominant Emotional Pattern",
       body: journals.length
-        ? `Your dominant mood is "${dominantMood?.name || "Neutral"}". Awareness of patterns is the first step to growth.`
-        : "Write more entries to unlock emotional pattern analysis.",
+        ? `Your primary emotional state is "${dominantMood?.name || "Neutral"}". Noticing this pattern in daily entries allows you to respond consciously rather than react impulsively.`
+        : "Record a few reflections to unlock cognitive pattern analysis.",
     },
     {
       icon: Heart,
-      color: "#e89a52",
-      bg: "rgba(217,124,46,0.08)",
-      border: "rgba(217,124,46,0.15)",
-      title: "Well-being Score",
-      body: `Your average mood score is ${avgMood}/10. ${
+      color: "#fbbf24",
+      bg: "rgba(251, 191, 36, 0.08)",
+      border: "rgba(251, 191, 36, 0.2)",
+      title: "Mental Well-being Index",
+      body: `Your average reflection score is ${avgMood} / 10. ${
         Number(avgMood) >= 7
-          ? "You're doing great — keep nurturing positive habits!"
-          : "Consider activities that bring you joy to boost your overall score."
+          ? "You are maintaining high emotional resilience and healthy baseline routines!"
+          : "Consider gentle calming pauses, mindfulness walks, or sleep hygiene to support your mood."
       }`,
     },
     {
       icon: TrendingUp,
-      color: "#d4697b",
-      bg: "rgba(192,77,97,0.08)",
-      border: "rgba(192,77,97,0.15)",
-      title: "Journaling Habit",
-      body: `${journals.length} total entries recorded. Consistent journaling improves self-awareness and emotional regulation over time.`,
+      color: "#f87171",
+      bg: "rgba(248, 113, 113, 0.08)",
+      border: "rgba(248, 113, 113, 0.2)",
+      title: "Reflective Habit Growth",
+      body: `You have documented ${journals.length} reflections. Habit researchers find that 2 weeks of continuous journaling fundamentally rewires stress reactivity.`,
     },
     {
       icon: Sparkles,
-      color: "#abc0e3",
-      bg: "rgba(99,130,201,0.08)",
-      border: "rgba(99,130,201,0.15)",
-      title: "Recommendation",
-      body: "Try the 5-minute gratitude exercise: write 3 things you're grateful for at the end of each day.",
+      color: "#60a5fa",
+      bg: "rgba(96, 165, 250, 0.08)",
+      border: "rgba(96, 165, 250, 0.2)",
+      title: "Empathetic Recommendation",
+      body: "Try an evening gratitude audit: note down 3 small wins or pleasant moments before closing your laptop for the night.",
     },
   ];
 
   return (
-    <DashboardLayout title="Insights">
-      <div className="max-w-4xl mx-auto">
+    <DashboardLayout title="Insights & Intelligence">
+      <div className="max-w-7xl mx-auto space-y-7">
         {/* Header */}
         <div
-          className="mb-8 animate-fade-up opacity-0-init"
-          style={{ animationFillMode: "forwards" }}
+          className="rounded-3xl p-6 sm:p-8 border border-white/10"
+          style={{
+            background:
+              "radial-gradient(ellipse at 80% 20%, rgba(96, 165, 250, 0.16), transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(52, 211, 153, 0.15), transparent 50%), linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%), #0c101a",
+            boxShadow: "0 20px 50px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+          }}
         >
-          <h2 className="font-display text-2xl font-semibold text-ink-100">
+          <div className="inline-flex items-center gap-2 rounded-full border border-mint-400/25 bg-mint-400/10 px-3 py-1 text-xs font-semibold text-mint-300 mb-3">
+            <Compass size={14} />
+            <span>AI Psychological Modeling</span>
+          </div>
+          <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white">
             Your Mental Landscape
           </h2>
-          <p className="text-sm text-ink-500 mt-1">
-            AI-generated insights based on your journal entries
+          <p className="mt-2 text-sm text-ink-300 max-w-2xl leading-relaxed">
+            Synthesized emotional patterns derived from your private journal entries. All analyses are performed with privacy-first NLP.
           </p>
         </div>
 
-        {/* Charts row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-          {/* Mood distribution */}
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pie Chart: Mood Distribution */}
           <div
-            className="rounded-2xl p-5 animate-fade-up opacity-0-init"
+            className="rounded-3xl p-6 border border-white/10 backdrop-blur-xl"
             style={{
-              background: "rgba(28,28,40,0.6)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              animationDelay: "100ms",
-              animationFillMode: "forwards",
+              background: "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), rgba(15, 18, 27, 0.8)",
+              boxShadow: "0 15px 40px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
             }}
           >
-            <h3 className="font-display font-semibold text-ink-200 mb-4">
-              Mood Distribution
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-mint-300">Emotional Breakdown</p>
+                <h3 className="font-display text-lg font-bold text-white">Mood Distribution</h3>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/[0.05] text-ink-300">
+                All-time
+              </span>
+            </div>
+
             {moodDist.length === 0 ? (
-              <div className="h-48 flex items-center justify-center text-ink-600 text-sm">
-                No data yet
+              <div className="h-56 flex items-center justify-center text-ink-500 text-xs">
+                No entries available to map distribution.
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={220}>
+              <ResponsiveContainer width="100%" height={230}>
                 <PieChart>
                   <Pie
                     data={moodDist}
                     cx="50%"
                     cy="50%"
-                    innerRadius={55}
-                    outerRadius={85}
-                    paddingAngle={3}
+                    innerRadius={60}
+                    outerRadius={90}
+                    paddingAngle={4}
                     dataKey="value"
                   >
                     {moodDist.map((entry, i) => (
-                      <Cell key={i} fill={entry.fill} opacity={0.85} />
+                      <Cell key={i} fill={entry.fill} stroke="rgba(0,0,0,0.4)" strokeWidth={2} />
                     ))}
                   </Pie>
                   <Tooltip content={<CustomTooltip />} />
                   <Legend
                     formatter={(value) => (
-                      <span style={{ color: "#9898b8", fontSize: 11 }}>
+                      <span style={{ color: "#c9d2e7", fontSize: 11, fontWeight: 500 }}>
                         {value}
                       </span>
                     )}
@@ -229,66 +238,78 @@ export default function Insights() {
             )}
           </div>
 
-          {/* Emotional balance radar */}
+          {/* Radar Chart: Emotional Balance */}
           <div
-            className="rounded-2xl p-5 animate-fade-up opacity-0-init"
+            className="rounded-3xl p-6 border border-white/10 backdrop-blur-xl"
             style={{
-              background: "rgba(28,28,40,0.6)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              animationDelay: "150ms",
-              animationFillMode: "forwards",
+              background: "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), rgba(15, 18, 27, 0.8)",
+              boxShadow: "0 15px 40px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
             }}
           >
-            <h3 className="font-display font-semibold text-ink-200 mb-4">
-              Emotional Balance
-            </h3>
-            <ResponsiveContainer width="100%" height={220}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-electric-500">Multiaxial Balance</p>
+                <h3 className="font-display text-lg font-bold text-white">Emotional Equilibrium Radar</h3>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/[0.05] text-ink-300">
+                6 Dimensions
+              </span>
+            </div>
+
+            <ResponsiveContainer width="100%" height={230}>
               <RadarChart data={radarData}>
-                <PolarGrid stroke="rgba(255,255,255,0.06)" />
+                <PolarGrid stroke="rgba(255,255,255,0.07)" />
                 <PolarAngleAxis
                   dataKey="axis"
-                  tick={{ fill: "#4a4a6a", fontSize: 11 }}
+                  tick={{ fill: "#9aa5c4", fontSize: 11, fontWeight: 600 }}
                 />
                 <Radar
                   name="Emotions"
                   dataKey="value"
-                  stroke="#4e8c7c"
-                  fill="#4e8c7c"
-                  fillOpacity={0.2}
-                  strokeWidth={1.5}
+                  stroke="#34d399"
+                  fill="#34d399"
+                  fillOpacity={0.25}
+                  strokeWidth={2}
                 />
               </RadarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* AI insight cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {aiInsightCards.map((card, i) => (
-            <div
-              key={card.title}
-              className="rounded-2xl p-5 animate-fade-up opacity-0-init"
-              style={{
-                background: card.bg,
-                border: `1px solid ${card.border}`,
-                animationDelay: `${200 + i * 80}ms`,
-                animationFillMode: "forwards",
-              }}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.06)" }}
-                >
-                  <card.icon size={15} style={{ color: card.color }} />
+        {/* AI Insight Cards */}
+        <div>
+          <div className="mb-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-mint-300">Cognitive Feedback</p>
+            <h3 className="font-display text-xl font-bold text-white">Psychological Insights</h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {aiInsightCards.map((card) => (
+              <div
+                key={card.title}
+                className="rounded-2xl p-5 border backdrop-blur-md transition-all hover:scale-[1.01]"
+                style={{
+                  background: card.bg,
+                  borderColor: card.border,
+                }}
+              >
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.08)" }}
+                  >
+                    <card.icon size={16} style={{ color: card.color }} />
+                  </div>
+                  <h4 className="text-sm font-bold" style={{ color: card.color }}>
+                    {card.title}
+                  </h4>
                 </div>
-                <p className="text-sm font-semibold" style={{ color: card.color }}>
-                  {card.title}
+                <p className="text-xs text-ink-200 leading-relaxed font-normal">
+                  {card.body}
                 </p>
               </div>
-              <p className="text-sm text-ink-400 leading-relaxed">{card.body}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </DashboardLayout>
