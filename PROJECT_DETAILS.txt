@@ -1,0 +1,827 @@
+================================================================================
+                    WELLSYNC (MINDSCRIBE) — COMPREHENSIVE PROJECT MANUAL
+       AI-INTEGRATED MENTAL HEALTH JOURNAL & HOLISTIC WELLNESS ECOSYSTEM
+================================================================================
+Document Version  : 1.1.0
+Generated Date    : October 2026
+Repository Corpus : themanjeetkr/AI-Integrated-Mental-Health-Journal
+Status            : Full-Stack Production & Active Enhancement
+Target Audience   : Developers, Stakeholders, Product Managers, System Architects
+================================================================================
+
+TABLE OF CONTENTS:
+--------------------------------------------------------------------------------
+1.  EXECUTIVE SUMMARY & CORE VISION
+2.  WHAT THE PROJECT DOES (FEATURES & FUNCTIONALITY)
+    2.1. Smart AI-Powered Emotional Journaling
+    2.2. Mood Analytics & Psychological Insights
+    2.3. Intelligent Nutrition & Meal Analyzer
+    2.4. Authentication, User Management & Security
+    2.5. Billing, Monetization & Subscription Infrastructure
+    2.6. Responsive Dark-Aesthetic User Experience
+3.  HOW IT WORKS (SYSTEM ARCHITECTURE & TECHNICAL WORKFLOWS)
+    3.1. High-Level Architectural Flow
+    3.2. Frontend Technology Stack & Component Structure
+    3.3. State Management & API Communication Layer
+    3.4. Backend Runtime, Express 5 Pipeline & Security Middlewares
+    3.5. AI / NLP Emotion Detection & Reflection Engine
+    3.6. Nutrition NLP Text Parser & USDA FoodData Central Integration
+    3.7. Payment Verification Architecture (Razorpay HMAC-SHA256)
+4.  DATABASE ARCHITECTURE & MONGOOSE SCHEMAS
+    4.1. User Schema (Backend/models/User.js)
+    4.2. Journal Schema (Backend/models/Journal.js)
+    4.3. Meal Schema (Backend/models/Meal.js)
+    4.4. Payment Schema (Backend/models/Payment.js)
+    4.5. Food Schema (Backend/models/Food.js)
+5.  COMPLETE API SPECIFICATION & ROUTE REFERENCE
+    5.1. Authentication Routes (/api/auth)
+    5.2. Journal Routes (/api/journals)
+    5.3. Meal & Nutrition Routes (/api/meals)
+    5.4. Payment Routes (/api/payment)
+    5.5. System Health Check (/api)
+6.  DIRECTORY STRUCTURE & COMPLETE FILE INVENTORY
+7.  CURRENT IMPLEMENTATION STATUS & AUDIT
+    7.1. Fully Operational & Verified Modules
+    7.2. In-Progress & Scheduled Wiring
+    7.3. Security & Reliability Audit
+8.  FUTURE PLANS & STRATEGIC ROADMAP
+    8.1. Phase 1: Near-Term Enhancements (Months 1 - 3)
+    8.2. Phase 2: Medium-Term Evolutions (Months 4 - 6)
+    8.3. Phase 3: Long-Term & Enterprise Scaling (Months 7 - 12+)
+9.  ENVIRONMENT VARIABLES & LOCAL DEVELOPMENT SETUP
+    9.1. Backend Configuration (.env)
+    9.2. Frontend Configuration (.env)
+    9.3. Step-by-Step Installation & Execution Guide
+10. PRODUCTION DEPLOYMENT STRATEGY
+11. SUMMARY & CONCLUSION
+
+================================================================================
+1. EXECUTIVE SUMMARY & CORE VISION
+================================================================================
+
+WellSync (also branded within modules as MindScribe) is a modern full-stack, 
+privacy-first digital wellness and mental health companion. It is specifically
+engineered to bridge the critical gap between emotional mental health and 
+physical physiological nutrition.
+
+Modern health platforms almost always isolate mental health from physical health:
+users track workouts/calories in one app, and write notes or talk to therapists in 
+another. WellSync reconciles both domains into a single cohesive platform.
+
+THE CORE PREMISE:
+- What you feel impacts how and what you eat (emotional eating, loss of appetite, stress cravings).
+- What you eat impacts your emotional equilibrium, energy, and stress resilience.
+- By combining automated AI emotional sentiment analysis of personal journals with
+  natural-language dietary intake logging, WellSync offers deep self-awareness 
+  and actionable reflective guidance.
+
+CLINICAL & ETHICAL DISCLAIMER:
+WellSync is strictly an introspective mindfulness and self-care platform. It is 
+not a clinical diagnostic device, medical instrument, or substitute for 
+professional psychiatric, psychological, or dietary counsel. Built-in heuristics
+monitor for severe distress indicators and provide non-judgmental prompts.
+
+================================================================================
+2. WHAT THE PROJECT DOES (FEATURES & FUNCTIONALITY)
+================================================================================
+
+--------------------------------------------------------------------------------
+2.1. SMART AI-POWERED EMOTIONAL JOURNALING
+--------------------------------------------------------------------------------
+- Rich Personal Journaling: Users write free-form daily journal entries with titles,
+  detailed text content, mood selectors, and custom thematic tags.
+- Automated Emotion Classification: When an entry is analyzed or saved, the text 
+  is processed through a Hugging Face Natural Language Processing (NLP) pipeline.
+  It classifies the dominant emotion into categories:
+  * Joy / Happiness
+  * Sadness
+  * Anger / Frustration
+  * Fear / Anxiety
+  * Surprise
+  * Calm / Neutral
+- Multi-Tier Emotion Resolution: Combines keyword heuristic patterns, confidence
+  scoring, entry word count, and transformer model probabilities to accurately
+  determine whether the entry is joyful, anxious, sad, angry, calm, or neutral.
+- Empathetic AI Feedback Generation: Rather than generic automated replies, the 
+  engine constructs tailored psychological prompts:
+  * For Anger: Grounding prompts, breathing exercises, and boundary reflections.
+  * For Sadness: Compassionate self-soothing, identifying specific distress triggers.
+  * For Anxiety: Identifying controllable vs. uncontrollable factors and micro-steps.
+  * For Joy/Excitement: Capturing positive triggers to foster gratitude habits.
+- Live AI Assistant in Editor: While composing an entry (minimum 20 characters), 
+  users can click "Get AI Reflection" to preview detected emotions, recommendations, 
+  and supportive guidance before committing the entry to the database.
+- Complete CRUD Operations: Entries can be created, viewed in detail, edited, 
+  searched, filtered, and deleted.
+
+--------------------------------------------------------------------------------
+2.2. MOOD ANALYTICS & PSYCHOLOGICAL INSIGHTS
+--------------------------------------------------------------------------------
+- Emotional Balance Radar Chart: Visualizes the multi-axis distribution of the user's
+  emotional spectrum across Joy, Calm, Focus, Anxiety, Sadness, and Anger using 
+  Recharts polar coordinate radar diagrams.
+- Mood Distribution Breakdown: Interactive donut and pie charts representing the 
+  exact percentage of moods logged over the user's journaling lifecycle.
+- Weekly Reflection Timeline: Area charts showing day-by-day emotional scores (from 
+  scale 2 for Anger up to 10 for Excitement) alongside entry frequency bars.
+- Pattern Recognition & Habit Cards:
+  * Emotional Equilibrium: Evaluates when calmness peaks during the week.
+  * Habit Momentum: Tracks streak consistency and reflection count.
+  * Actionable Guidance: Delivers dynamic mindfulness recommendations (e.g. 3-point
+    gratitude scan, evening wind-down journaling).
+
+--------------------------------------------------------------------------------
+2.3. INTELLIGENT NUTRITION & MEAL ANALYZER
+--------------------------------------------------------------------------------
+- Natural Language Input: Users do not need to search tedious databases item by item
+  or weigh food in grams. They simply enter meal text in plain conversational English:
+  Example: "2 bananas, 1 glass milk, 1 bowl oatmeal, 2 boiled eggs".
+- Automated Unit & Quantity Parsing: Regex algorithms parse quantities, fractions 
+  (e.g., "1/2"), and common volume units (cup, bowl, glass, tbsp, tsp, piece, slice, 
+  serving) to calculate individual portion multipliers.
+- Live Macronutrient Extraction: Connects to the USDA FoodData Central API to fetch
+  exact nutritional profiles:
+  * Total Calories (kcal)
+  * Protein (grams)
+  * Carbohydrates (grams)
+  * Total Fat / Lipids (grams)
+  * Dietary Fiber (grams)
+- Aggregated Daily & Weekly Metrics:
+  * Today's Nutrient Summary: Real-time progress cards against standard dietary targets.
+  * 7-Day Rolling Calorie Trend: Daily area chart of caloric intake.
+  * 4-Week Trajectory: Weekly aggregated intake patterns.
+- Persistent Meal Logging: Users can review their full meal history and delete records.
+
+--------------------------------------------------------------------------------
+2.4. AUTHENTICATION, USER MANAGEMENT & SECURITY
+--------------------------------------------------------------------------------
+- Secure User Registration & Login: Standard email/password onboarding.
+- Password Hashing: Uses bcryptjs with 10 salt rounds before saving to MongoDB.
+- Stateless Session Tokens: Issues signed JSON Web Tokens (JWT) with a 24-hour TTL.
+- Account Management: Users can update their display name, email address, and 
+  securely change their password (with current password verification).
+- Route Protection: Frontend ProtectedRoute components prevent unauthorized access,
+  automatically redirecting unauthenticated visitors to the login view.
+- Security Headers: Express backend utilizes Helmet to configure Content Security 
+  Policies, anti-XSS filters, clickjacking prevention, and MIME sniffing protection.
+- CORS Policies: Configured to support local development and production domains.
+
+--------------------------------------------------------------------------------
+2.5. BILLING, MONETIZATION & SUBSCRIPTION INFRASTRUCTURE
+--------------------------------------------------------------------------------
+- Subscription Tiers:
+  * Free Tier (₹0): Unlimited private journaling, manual mood tracking, weekly reflections.
+  * MindScribe Plus (₹299/month or ₹249/month billed annually): Unlimited AI reflections,
+    advanced mood analytics, and natural language nutrition analyzer.
+  * MindScribe Care (₹599/month or ₹499/month billed annually): Everything in Plus,
+    personalized wellness plans, priority support, and early access tools.
+- Razorpay Payment Gateway Integration:
+  * Backend order creation endpoint (/api/payment/create-order) converting INR to paise.
+  * Cryptographic HMAC-SHA256 signature verification (/api/payment/verify).
+  * Persistent payment history database logging (Payment model).
+  * Frontend checkout review and interactive modal preview.
+
+--------------------------------------------------------------------------------
+2.6. RESPONSIVE DARK-AESTHETIC USER EXPERIENCE
+--------------------------------------------------------------------------------
+- Bespoke Visual Design: Deep slate/obsidian palette (#0a0a0f, #151720, #1c1c28) 
+  paired with sage green (#4e8c7c), emerald, amber, and rose accents.
+- Micro-Interactions: Smooth hover transitions, interactive tooltips, glowing glassmorphic 
+  cards, and live character counters.
+- Toast Notification Feedback: Integrated react-hot-toast notifications for all 
+  user actions (saving, updating, deleting, errors).
+- Cross-Device Navigation: Full-featured desktop sidebar with collapse states and 
+  responsive top navigation bar for mobile devices.
+
+================================================================================
+3. HOW IT WORKS (SYSTEM ARCHITECTURE & TECHNICAL WORKFLOWS)
+================================================================================
+
+--------------------------------------------------------------------------------
+3.1. HIGH-LEVEL ARCHITECTURAL FLOW
+--------------------------------------------------------------------------------
+
+[ USER WEB BROWSER ]
+       │
+       ▼
+[ FRONTEND: React 19 + Vite 7 + Tailwind CSS v4 ]
+       │
+       ├─ Auth Context (Token, User Profile, LocalStorage)
+       ├─ Journal Context (CRUD State, Live Cache)
+       ├─ Recharts Visualizations (Area, Bar, Radar, Pie)
+       │
+       ▼ (Axios / Fetch REST Calls with Authorization: Bearer <JWT>)
+[ BACKEND: Express 5 on Node.js ]
+       │
+       ├─ Helmet + CORS Middlewares
+       ├─ Auth Middleware (JWT Token Verification)
+       │
+       ├──► [ MongoDB Atlas / Mongoose 9 ]
+       │       ├── Users Collection
+       │       ├── Journals Collection
+       │       ├── Meals Collection
+       │       └── Payments Collection
+       │
+       ├──► [ Hugging Face Inference API ]
+       │       └── Model: j-hartmann/emotion-english-distilroberta-base
+       │           (Returns probability scores for 7 primary emotions)
+       │
+       ├──► [ USDA FoodData Central API ]
+       │       └── Endpoint: /v1/foods/search
+       │           (Returns nutritional breakdown per food query)
+       │
+       └──► [ Razorpay Payment Gateway ]
+               └── Orders & HMAC-SHA256 Signature Verification
+
+--------------------------------------------------------------------------------
+3.2. FRONTEND TECHNOLOGY STACK & COMPONENT STRUCTURE
+--------------------------------------------------------------------------------
+- Framework: React 19.2 with Vite 7.3 bundler.
+- Routing: React Router DOM v7 with nested declarative routes and route guards.
+- Styling: Tailwind CSS v4 featuring CSS-native theme configurations and custom tokens.
+- Iconography: Lucide-react for consistent, modern SVG UI icons.
+- Data Charts: Recharts v3 (ResponsiveContainer, AreaChart, BarChart, RadarChart, PieChart).
+- Date Manipulation: date-fns v4 for calendar math and rolling window intervals.
+- Notification System: react-hot-toast for non-blocking visual feedback.
+
+Component Breakdown:
+- Layout Components:
+  * DashboardLayout.jsx: The persistent app shell wrapping authenticated pages.
+  * Sidebar.jsx: Desktop navigation containing brand logo, page links, and user info.
+  * Navbar.jsx: Top navigation header with responsive toggle and quick actions.
+- Journal Components:
+  * JournalCard.jsx: Feed cards with mood badges, formatted dates, and snippet text.
+  * JournalEditor.jsx: Dual-column authoring environment with real-time AI sidebar.
+  * JournalDetail.jsx: Detailed inspection view showing full text, AI insights, and tags.
+- Nutrition Components:
+  * MealBreakdown.jsx: Tabular macro breakdown of parsed ingredients.
+  * MealHistory.jsx: Chronological list of logged meals with instant deletion.
+  * NutritionSummary.jsx: Radial/bar target progress indicators for daily macros.
+- Core UI Elements:
+  * StatCard.jsx: Highlighting key metrics with subtle gradient borders.
+  * ProtectedRoute.jsx: Authentication gate guarding dashboard and editor views.
+
+--------------------------------------------------------------------------------
+3.3. STATE MANAGEMENT & API COMMUNICATION LAYER
+--------------------------------------------------------------------------------
+- Context API Architecture:
+  * AuthContext.jsx: Handles user credentials, login, registration, profile updates, 
+    password changes, and persistent sync with browser LocalStorage.
+  * JournalContext.jsx: Centralizes journal state across the feed, editor, and dashboard.
+    Optimistically updates UI upon creation, editing, or deletion of entries.
+- API Client Normalization (api.js):
+  * Dynamically detects whether the application is running in local development 
+    (http://localhost:5000/api) or production (Render hosted backend).
+  * Automatically injects Bearer authorization headers into authenticated requests.
+
+--------------------------------------------------------------------------------
+3.4. BACKEND RUNTIME, EXPRESS 5 PIPELINE & SECURITY MIDDLEWARES
+--------------------------------------------------------------------------------
+- Runtime: Node.js with Express 5 framework.
+- Middlewares:
+  * helmet(): Enforces strict HTTP response headers for enhanced web security.
+  * cors(): Handles cross-origin requests between the Vite frontend and Express API.
+  * express.json(): Native body-parsing middleware for incoming JSON payloads.
+  * authMiddleware.js: Intercepts incoming requests, validates the JWT token against
+    JWT_SECRET, extracts the user ID, and attaches the user document to req.user.
+
+--------------------------------------------------------------------------------
+3.5. AI / NLP EMOTION DETECTION & REFLECTION ENGINE
+--------------------------------------------------------------------------------
+The file Backend/utils/aiAnalysis.js contains the intelligent processing logic:
+
+Step 1: Text Preprocessing & Keyword Heuristics
+  The engine cleans input text and first evaluates explicit emotional indicators:
+  - Anger: ["angry", "mad", "rage", "furious", "fight", "hit", "hate", "irritated"]
+  - Sadness: ["sad", "cried", "cry", "lonely", "depressed", "hopeless", "hurt", "broken"]
+  - Fear/Anxiety: ["scared", "afraid", "anxious", "worried", "panic", "nervous", "stressed"]
+  - Joy: ["happy", "excited", "proud", "grateful", "great", "awesome", "achieved"]
+
+Step 2: Hugging Face Deep Learning Inference
+  The text is transmitted to Hugging Face Inference API running:
+  Model: `j-hartmann/emotion-english-distilroberta-base`
+  The model evaluates contextual semantic patterns and scores emotions across:
+  [joy, sadness, anger, fear, surprise, neutral].
+
+Step 3: Multi-Tier Mood Resolution (resolveJournalMood)
+  1. If clear emotional keywords exist, prioritize them to respect explicit user words.
+  2. If the user explicitly picked a manual mood, and entry is short (< 12 words) 
+     or model confidence is below 65%, honor user selection.
+  3. Otherwise, adopt the transformer model's highest-probability prediction.
+
+Step 4: Empathetic Reflection Construction (buildJournalSuggestions)
+  Generates targeted, supportive advice and dynamic reflection prompts:
+  * Encourages gratitude scanning if no gratitude terms were used.
+  * Suggests actionable 10-minute micro-steps if negative emotions are detected.
+  * Prompts the user to capture success strategies when joy or calm is detected.
+
+--------------------------------------------------------------------------------
+3.6. NUTRITION NLP TEXT PARSER & USDA FOODDATA CENTRAL INTEGRATION
+--------------------------------------------------------------------------------
+The file Backend/services/usdaService.js drives natural language food tracking:
+
+Step 1: Line-by-Line Parsing (parseMealLine)
+  Splits user text by newline or comma. Uses regex:
+  /^(\d+(?:\.\d+)?|\d+\/\d+)\s+(.+)$/
+  - Matches numbers (e.g. "2") or fractions (e.g. "1/2").
+  - Identifies food descriptions while stripping redundant unit keywords 
+    (cup, bowl, glass, tbsp, tsp, piece, slice, serving).
+
+Step 2: USDA Search Query (searchFood)
+  Sends food query to USDA FoodData Central endpoint:
+  https://api.nal.usda.gov/fdc/v1/foods/search
+  Fetches official USDA food nutrients using exact alias mappings:
+  - Calories: "Energy", "Energy (Atwater General Factors)"
+  - Protein: "Protein"
+  - Carbohydrates: "Carbohydrate, by difference"
+  - Fat: "Total lipid (fat)"
+  - Fiber: "Fiber, total dietary"
+
+Step 3: Scaling & Aggregation
+  Multiplies base 100g or serving nutrients by the parsed quantity multiplier.
+  Sums all individual ingredients into total meal macros:
+  Calories, Protein, Carbohydrates, Fat, and Fiber.
+
+Step 4: MongoDB Aggregation Pipeline
+  Uses MongoDB $match and $group aggregation operators to calculate the user's
+  real-time cumulative daily intake from 00:00:00 to 23:59:59.
+
+--------------------------------------------------------------------------------
+3.7. PAYMENT VERIFICATION ARCHITECTURE (RAZORPAY HMAC-SHA256)
+--------------------------------------------------------------------------------
+- Razorpay Orders: When a user selects a plan, Backend/controllers/paymentController.js
+  initiates an order with the amount in paise (e.g., ₹299 = 29900 paise).
+- Cryptographic Signature Verification:
+  Upon checkout completion, Razorpay returns:
+  * razorpay_order_id
+  * razorpay_payment_id
+  * razorpay_signature
+  The server recomputes the expected signature:
+  HMAC_SHA256(razorpay_order_id + "|" + razorpay_payment_id, RAZORPAY_KEY_SECRET)
+  If the generated hex digest matches razorpay_signature, payment validity is guaranteed.
+- Database Ledger: Successful payments are stored in the Payment collection with
+  status 'paid', timestamp, and plan identifier.
+
+================================================================================
+4. DATABASE ARCHITECTURE & MONGOOSE SCHEMAS
+================================================================================
+
+--------------------------------------------------------------------------------
+4.1. USER SCHEMA (Backend/models/User.js)
+--------------------------------------------------------------------------------
+Mongoose Model: User (Collection: 'users')
+Fields:
+- `name`      : { type: String, required: true, trim: true }
+- `email`     : { type: String, required: true, unique: true, lowercase: true }
+- `password`  : { type: String, required: true } -> BCrypt hashed (10 rounds)
+- `timestamps`: Automatically manages `createdAt` and `updatedAt`
+
+--------------------------------------------------------------------------------
+4.2. JOURNAL SCHEMA (Backend/models/Journal.js)
+--------------------------------------------------------------------------------
+Mongoose Model: Journal (Collection: 'journals')
+Fields:
+- `userId`    : { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
+- `title`     : { type: String, required: true }
+- `content`   : { type: String, required: true }
+- `mood`      : { type: String, enum: ["happy", "excited", "calm", "neutral", 
+                  "anxious", "sad", "angry"], default: "neutral" }
+- `moodScore` : { type: Number, min: -5, max: 5 }
+- `tags`      : [ { type: String } ]
+- `aiReply`   : { type: String }
+- `aiInsights`: {
+    sentimentScore   : { type: Number },
+    primaryEmotion   : { type: String },
+    secondaryEmotions: [ { type: String } ],
+    riskLevel        : { type: String },
+    recommendations  : [ { type: String } ]
+  }
+- `timestamps`: Automatically manages `createdAt` and `updatedAt`
+- Compound Index: { userId: 1, createdAt: -1 }
+
+--------------------------------------------------------------------------------
+4.3. MEAL SCHEMA (Backend/models/Meal.js)
+--------------------------------------------------------------------------------
+Mongoose Model: Meal (Collection: 'meals')
+Embedded Sub-Schema: foodSchema
+- `name`          : { type: String, required: true, trim: true }
+- `calories`      : { type: Number, default: 0 }
+- `protein`       : { type: Number, default: 0 }
+- `carbohydrates` : { type: Number, default: 0 }
+- `fat`           : { type: Number, default: 0 }
+- `fiber`         : { type: Number, default: 0 }
+
+Main Meal Schema:
+- `user`               : { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true }
+- `foods`              : [foodSchema] (Validation: foods.length > 0)
+- `totalCalories`      : { type: Number, default: 0 }
+- `totalProtein`       : { type: Number, default: 0 }
+- `totalCarbohydrates` : { type: Number, default: 0 }
+- `totalFat`           : { type: Number, default: 0 }
+- `totalFiber`         : { type: Number, default: 0 }
+- `createdAt`          : { type: Date, default: Date.now }
+- Compound Index       : { user: 1, createdAt: -1 }
+
+--------------------------------------------------------------------------------
+4.4. PAYMENT SCHEMA (Backend/models/Payment.js)
+--------------------------------------------------------------------------------
+Mongoose Model: Payment (Collection: 'payments')
+Fields:
+- `userId`              : { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+- `razorpay_order_id`   : { type: String, required: true }
+- `razorpay_payment_id` : { type: String, required: true }
+- `razorpay_signature`  : { type: String, required: true }
+- `amount`              : { type: Number, required: true } (Stored in paise: ₹299 = 29900)
+- `status`              : { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' }
+- `plan`                : { type: String, default: 'Premium' }
+- `timestamps`          : Automatically manages `createdAt` and `updatedAt`
+
+--------------------------------------------------------------------------------
+4.5. FOOD SCHEMA (Backend/models/Food.js)
+--------------------------------------------------------------------------------
+Standalone dictionary schema for local cached foods and offline fallback support.
+
+================================================================================
+5. COMPLETE API SPECIFICATION & ROUTE REFERENCE
+================================================================================
+
+All protected endpoints require the following HTTP header:
+Authorization: Bearer <jwt_token>
+
+--------------------------------------------------------------------------------
+5.1. AUTHENTICATION ROUTES (/api/auth)
+--------------------------------------------------------------------------------
+Controller: Backend/controllers/authController.js
+
++--------+--------------------+-----------+-----------------------------------+------------------------------------------+
+| Method | Endpoint           | Access    | Request Payload                   | Success Response / Description           |
++--------+--------------------+-----------+-----------------------------------+------------------------------------------+
+| POST   | /api/auth/register | Public    | { name, email, password }         | HTTP 201: { token, user: { _id, name,    |
+|        |                    |           |                                   | email }, message: "user registered..." } |
+| POST   | /api/auth/login    | Public    | { email, password }               | HTTP 200: { token, user: { _id, name,    |
+|        |                    |           |                                   | email } }                                |
+| PUT    | /api/auth/profile  | Protected | { name, email }                   | HTTP 200: { user: { _id, name, email } } |
+|        |                    |           |                                   | Checks email uniqueness among others.    |
+| PUT    | /api/auth/password | Protected | { currentPassword, newPassword }  | HTTP 200: { message: "Password updated" }|
+|        |                    |           |                                   | Validates existing bcrypt hash first.    |
++--------+--------------------+-----------+-----------------------------------+------------------------------------------+
+
+--------------------------------------------------------------------------------
+5.2. JOURNAL ROUTES (/api/journals)
+--------------------------------------------------------------------------------
+Controller: Backend/controllers/journalController.js
+
++--------+-----------------------+-----------+-------------------------------+-----------------------------------------+
+| Method | Endpoint              | Access    | Request Payload / Params      | Success Response / Description          |
++--------+-----------------------+-----------+-------------------------------+-----------------------------------------+
+| GET    | /api/journals         | Protected | Query: ?page=1&limit=50       | HTTP 200: [ { _id, title, content,      |
+|        |                       |           |                               | mood, moodScore, tags, createdAt } ]    |
+| POST   | /api/journals         | Protected | { title, content, mood, tags }| HTTP 201: Saved journal document.       |
+|        |                       |           |                               | Triggers async AI analysis in background|
+| POST   | /api/journals/suggest | Protected | { content, mood }             | HTTP 200: { primaryEmotion, mood, reply,|
+|        |                       |           | (min 20 characters)           | suggestions: [...] }                    |
+| GET    | /api/journals/:id     | Protected | Param: id (MongoDB ObjectId)  | HTTP 200: Journal document              |
+| PUT    | /api/journals/:id     | Protected | Param: id, Body: update fields| HTTP 200: Updated journal document      |
+| DELETE | /api/journals/:id     | Protected | Param: id (MongoDB ObjectId)  | HTTP 200: { message: "Journal deleted" }|
++--------+-----------------------+-----------+-------------------------------+-----------------------------------------+
+
+--------------------------------------------------------------------------------
+5.3. MEAL & NUTRITION ROUTES (/api/meals)
+--------------------------------------------------------------------------------
+Controller: Backend/controllers/mealController.js
+
++--------+-------------------------+-----------+-----------------------------+-----------------------------------------+
+| Method | Endpoint                | Access    | Request Payload             | Success Response / Description          |
++--------+-------------------------+-----------+-----------------------------+-----------------------------------------+
+| POST   | /api/meals/analyze      | Protected | { mealText: "2 bananas..." }| HTTP 200: { foods: [ { name, calories,  |
+|        |                         |           |                             | protein, carbohydrates, fat, fiber } ], |
+|        |                         |           |                             | totalCalories, totalProtein, ... }      |
+| POST   | /api/meals/save         | Protected | { foods, totalCalories, ...}| HTTP 201: Created meal document         |
+| GET    | /api/meals/history      | Protected | None                        | HTTP 200: Array of up to 100 meal logs  |
+| GET    | /api/meals/today-summary| Protected | None                        | HTTP 200: Aggregated daily totals       |
+|        |                         |           |                             | { totalCalories, totalProtein,          |
+|        |                         |           |                             | totalCarbohydrates, totalFat,           |
+|        |                         |           |                             | totalFiber, totalMeals }                |
+| DELETE | /api/meals/:id          | Protected | Param: id (MongoDB ObjectId)| HTTP 200: { message: "Meal deleted." }  |
++--------+-------------------------+-----------+-----------------------------+-----------------------------------------+
+
+--------------------------------------------------------------------------------
+5.4. PAYMENT ROUTES (/api/payment)
+--------------------------------------------------------------------------------
+Controller: Backend/controllers/paymentController.js
+
++--------+--------------------------+-----------+-----------------------------+-----------------------------------------+
+| Method | Endpoint                 | Access    | Request Payload             | Success Response / Description          |
++--------+--------------------------+-----------+-----------------------------+-----------------------------------------+
+| POST   | /api/payment/create-order| Protected | { amount: 299, plan: "..." }| HTTP 200: { success: true, order_id,   |
+|        |                          |           |                             | amount: 29900, currency: "INR", key_id }|
+| POST   | /api/payment/verify      | Protected | { razorpay_order_id,        | HTTP 200: { success: true, payment: {...|
+|        |                          |           | razorpay_payment_id,        | message: "Payment verified and saved!" }|
+|        |                          |           | razorpay_signature, amount }| Verifies HMAC-SHA256 signature.         |
+| GET    | /api/payment/history     | Protected | None                        | HTTP 200: { success: true, payments }   |
++--------+--------------------------+-----------+-----------------------------+-----------------------------------------+
+
+--------------------------------------------------------------------------------
+5.5. SYSTEM HEALTH CHECK (/api)
+--------------------------------------------------------------------------------
+- GET /api
+  Public. Returns server status confirmation string: "api is running".
+
+================================================================================
+6. DIRECTORY STRUCTURE & COMPLETE FILE INVENTORY
+================================================================================
+
+AI mental Health care/
+│
+├── Backend/
+│   ├── config/
+│   │   ├── db.js                 # MongoDB connection logic using Mongoose
+│   │   └── razorpay.js           # Razorpay SDK initialization instance
+│   ├── controllers/
+│   │   ├── authController.js     # User registration, login, profile & password handlers
+│   │   ├── FoodController.js     # Food dictionary controller stubs
+│   │   ├── journalController.js  # Journal CRUD, pagination, and AI suggestion triggers
+│   │   ├── mealController.js     # Natural language meal parsing & daily aggregation
+│   │   └── paymentController.js  # Razorpay order generation & HMAC signature verification
+│   ├── data/
+│   │   └── food.json             # Static food nutritional dataset
+│   ├── middlewares/
+│   │   ├── authMiddleware.js     # JWT Bearer token validator & req.user injector
+│   │   └── errorMiddleware.js    # Centralized Express error handler
+│   ├── models/
+│   │   ├── Food.js               # Standalone food dictionary schema
+│   │   ├── Journal.js            # Journal entry, emotion insight & mood schema
+│   │   ├── Meal.js               # Meal logs with embedded food item schema
+│   │   ├── Payment.js            # Razorpay transaction ledger schema
+│   │   └── User.js               # User authentication & credentials schema
+│   ├── routes/
+│   │   ├── AuthRoutes.js         # Authentication route declarations
+│   │   ├── FoodRoutes.js         # Food dictionary route declarations
+│   │   ├── journalRoutes.js      # Journal CRUD route declarations
+│   │   ├── mealRoutes.js         # Meal analysis & history route declarations
+│   │   └── paymentRoutes.js      # Razorpay payment route declarations
+│   ├── services/
+│   │   └── usdaService.js        # USDA FoodData Central client & natural language parser
+│   ├── utils/
+│   │   └── aiAnalysis.js         # Hugging Face DistilRoBERTa emotion classifier & heuristics
+│   ├── server.js                 # Express application root entry point
+│   ├── testAI.js                 # CLI testing script for Hugging Face inference API
+│   ├── .env                      # Local environment secrets (excluded from git)
+│   ├── .env.example              # Template for required environment variables
+│   └── package.json              # Backend dependencies (Express, Mongoose, Axios, Helmet, etc.)
+│
+├── Frontend/
+│   ├── public/                   # Static media, icons, and favicon assets
+│   ├── src/
+│   │   ├── api/                  # Axios base client configurations
+│   │   ├── assets/               # Local images and graphic assets
+│   │   ├── components/
+│   │   │   ├── journal/          # Journal-specific UI widgets
+│   │   │   ├── layout/
+│   │   │   │   ├── DashboardLayout.jsx  # Main application view wrapper
+│   │   │   │   ├── Navbar.jsx           # Top header bar with user actions
+│   │   │   │   └── Sidebar.jsx          # Collapsible desktop side menu
+│   │   │   ├── nutrition/
+│   │   │   │   ├── MealBreakdown.jsx    # Nutrition nutrient breakdown table
+│   │   │   │   ├── MealHistory.jsx      # Historical logged meals list
+│   │   │   │   └── NutritionSummary.jsx # Daily nutrient gauge & target meters
+│   │   │   ├── structure/        # Structural layout wrappers
+│   │   │   └── ui/
+│   │   │       ├── JournalCard.jsx      # Summary card for journal feed
+│   │   │       ├── ProtectedRoute.jsx   # Auth guard component
+│   │   │       └── StatCard.jsx         # Metric display card with gradient border
+│   │   ├── context/
+│   │   │   ├── AuthContext.jsx   # User auth state, token management & profile handlers
+│   │   │   └── JournalContext.jsx# Journal state, caching & CRUD dispatchers
+│   │   ├── pages/
+│   │   │   ├── Auth.jsx          # Unified Sign In / Sign Up portal
+│   │   │   ├── Billing.jsx       # Pricing tiers, plan switcher & checkout preview
+│   │   │   ├── Dashboard.jsx     # Central command center (analytics, recent logs, streaks)
+│   │   │   ├── Homepage.jsx      # High-conversion public marketing landing page
+│   │   │   ├── Insight.jsx       # Radar balance charts, mood distribution & deep metrics
+│   │   │   ├── JournalDetail.jsx # Deep inspection view for a single journal entry
+│   │   │   ├── JournalEditor.jsx # Interactive authoring studio with live AI reflections
+│   │   │   ├── Journals.jsx      # Chronological journal feed with search & filtering
+│   │   │   ├── Login.jsx         # Standalone login view
+│   │   │   ├── NutritionAnalyzer.jsx # Natural language meal logger & trend charts
+│   │   │   ├── Register.jsx      # Standalone registration view
+│   │   │   └── Setting.jsx       # Profile editing, account settings & password updates
+│   │   ├── services/
+│   │   │   └── api.js            # Consolidated frontend API client (Axios/Fetch bridge)
+│   │   ├── utils/                # UI helpers and formatting utilities
+│   │   ├── App.jsx               # Top-level React Router 7 configuration & Toaster setup
+│   │   ├── main.jsx              # React 19 root DOM mounter
+│   │   └── index.css             # Tailwind CSS v4 design system, font imports & dark themes
+│   ├── vite.config.js            # Vite configuration with React & Tailwind plugins
+│   ├── .env.example              # Frontend environment template
+│   └── package.json              # Frontend dependencies (React, Recharts, Lucide, Tailwind, etc.)
+│
+├── PROJECT_DETAILS.txt           # Complete comprehensive project manual
+├── README.md                     # Markdown documentation with visual showcase
+└── package.json                  # Root monorepo orchestration helper
+
+================================================================================
+7. CURRENT IMPLEMENTATION STATUS & AUDIT
+================================================================================
+
+--------------------------------------------------------------------------------
+7.1. FULLY OPERATIONAL & VERIFIED MODULES
+--------------------------------------------------------------------------------
+[X] Authentication & Authorization:
+    - User registration and login flow with JWT token issuance (24-hour TTL).
+    - Password hashing using bcryptjs with 10 salt rounds.
+    - Token storage in LocalStorage and AuthContext state synchronization.
+    - Profile update (name, email) and password change endpoints.
+[X] Journal Management:
+    - Complete CRUD operations (Create, Read, Update, Delete).
+    - Sorting by newest first (`createdAt: -1`) with database pagination.
+    - Mood tagging and custom keyword tagging.
+[X] AI Sentiment & Reflection Engine:
+    - Hugging Face Inference integration with `j-hartmann/emotion-english-distilroberta-base`.
+    - Keyword fallback heuristics for anger, sadness, fear, and joy.
+    - Dynamic empathetic replies and mindfulness recommendations.
+    - Live AI suggestion preview in JournalEditor.jsx (≥ 20 characters).
+[X] Mood Analytics & Visual Insights:
+    - Emotional Balance Radar Chart (Joy, Calm, Focus, Anxiety, Sadness, Anger).
+    - Mood distribution donut/pie charts with percentage calculations.
+    - 7-day emotional scoring timeline and reflection streak bars via Recharts.
+[X] Natural Language Nutrition Analyzer:
+    - Regular expression parser extracting numbers, fractions, and cooking units.
+    - USDA FoodData Central API integration for live macro lookups.
+    - Automatic scaling of calories, protein, carbs, fat, and fiber.
+    - Daily intake aggregation (MongoDB aggregate pipeline) and 7-day trend graphing.
+[X] Modern UI & User Experience:
+    - Bespoke dark-mode aesthetic with obsidian background and sage accents.
+    - Toast notifications for user actions via react-hot-toast.
+    - Desktop collapsible sidebar and responsive mobile navbar.
+[X] Billing Infrastructure:
+    - Backend Razorpay order creation and HMAC-SHA256 signature verification endpoints.
+    - Frontend pricing tier presentation and checkout preview modal.
+
+--------------------------------------------------------------------------------
+7.2. IN-PROGRESS & SCHEDULED WIRING
+--------------------------------------------------------------------------------
+[-] Live Razorpay Checkout Trigger:
+    - The backend has working order creation and signature verification controllers.
+    - Frontend Billing.jsx currently demonstrates a checkout preview modal; next step
+      is loading Razorpay's `checkout.js` script to trigger the live payment gateway.
+[-] Premium User Flag:
+    - Update User model with an `isPremium: Boolean` flag flipped upon successful payment.
+[-] Local Food Caching:
+    - Implement FoodController.js to store searched USDA foods in a local MongoDB collection,
+      reducing external network latency and API quota consumption.
+
+--------------------------------------------------------------------------------
+7.3. SECURITY & RELIABILITY AUDIT
+--------------------------------------------------------------------------------
+- OWASP Headers: Configured with Helmet middleware to mitigate clickjacking and XSS.
+- CORS Hardening: Supports local origin (`localhost:5173`) and production frontend domains.
+- Parameter Sanitization: MongoDB object ID validation and string trimming on input.
+- Error Handling: Centralized error middleware prevents raw stack trace leakage in production.
+
+================================================================================
+8. FUTURE PLANS & STRATEGIC ROADMAP
+================================================================================
+
+--------------------------------------------------------------------------------
+8.1. PHASE 1: NEAR-TERM ENHANCEMENTS (MONTHS 1 - 3)
+--------------------------------------------------------------------------------
+1. Voice-to-Text Journaling & Acoustic Sentiment Analysis:
+   - Voice dictation via Web Speech API or Whisper AI.
+   - Acoustic audio analysis (pitch, tremor, speech rate) for multi-modal stress detection.
+2. Photo-Based Meal Recognition & Barcode Scanner:
+   - Camera integration for snap-and-log meal estimation using Computer Vision APIs.
+   - Barcode scanning via OpenFoodFacts for instant packaged food lookups.
+3. Encrypted PDF / JSON Export:
+   - Password-protected PDF generation summarizing mood and nutrition trends
+     for therapy or medical consultations.
+4. Mindfulness Streaks & Consistency Gamification:
+   - Visual milestone badges and gentle notification reminders.
+5. Automated Crisis Intervention Protocol:
+   - Heuristics detecting severe distress/self-harm language.
+   - Displays gentle emergency modals with one-click dials to 988 (US/Canada),
+     Tele-MANAS (India), and Befrienders Worldwide.
+
+--------------------------------------------------------------------------------
+8.2. PHASE 2: MEDIUM-TERM EVOLUTIONS (MONTHS 4 - 6)
+--------------------------------------------------------------------------------
+1. Cross-Platform Mobile Applications:
+   - Native iOS and Android builds using React Native / Expo sharing business logic.
+   - Offline-first architecture using SQLite with background cloud sync.
+2. Wearable Health Data Integration:
+   - Sync with Apple HealthKit, Google Health Connect, Fitbit, and Oura.
+   - Correlate heart rate variability (HRV), sleep stages, and step counts with emotional states.
+3. Vector Memory & Long-Term RAG (Retrieval-Augmented Generation):
+   - Embed past reflections into a vector database (Pinecone or ChromaDB).
+   - Spot long-term cyclical mental health patterns over multi-month windows.
+4. Clinician & Therapist Collaboration Portal:
+   - Secure, consent-governed portal allowing therapists to view patient summaries.
+
+--------------------------------------------------------------------------------
+8.3. PHASE 3: LONG-TERM & ENTERPRISE SCALING (MONTHS 7 - 12+)
+--------------------------------------------------------------------------------
+1. Fine-Tuned Mental Health SLM:
+   - Fine-tuned open-source model (Llama 3 8B / Mistral 7B) on CBT/ACT clinical frameworks.
+2. End-to-End Zero-Knowledge Encryption (E2EE):
+   - Client-side encryption keys derived from user passwords via Web Cryptography API.
+   - Prevents anyone, including cloud database administrators, from reading journal entries.
+3. Corporate Wellness & B2B Employee Assistance Programs (EAP):
+   - Anonymized aggregate burnout and mental wellness heatmaps for enterprise HR teams.
+4. Peer Community & Anonymous Support Circles:
+   - Safe, AI-moderated anonymous support groups based on shared challenges.
+
+================================================================================
+9. ENVIRONMENT VARIABLES & LOCAL DEVELOPMENT SETUP
+================================================================================
+
+--------------------------------------------------------------------------------
+9.1. BACKEND CONFIGURATION (Backend/.env)
+--------------------------------------------------------------------------------
+PORT                  = 5000
+MONGO_URI             = mongodb+srv://<username>:<password>@cluster.mongodb.net/wellsync?retryWrites=true&w=majority
+JWT_SECRET            = your_super_secret_jwt_random_key_here
+HUGGINGFACE_API_TOKEN = hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+USDA_API_KEY          = your_usda_api_key_here
+RAZORPAY_KEY_ID       = rzp_test_xxxxxxxxxxxxxx
+RAZORPAY_KEY_SECRET   = your_razorpay_secret_key_here
+
+--------------------------------------------------------------------------------
+9.2. FRONTEND CONFIGURATION (Frontend/.env)
+--------------------------------------------------------------------------------
+VITE_API_BASE_URL     = http://localhost:5000/api
+# In production: https://ai-integrated-mental-health-journal.onrender.com/api
+
+--------------------------------------------------------------------------------
+9.3. STEP-BY-STEP INSTALLATION & EXECUTION GUIDE
+--------------------------------------------------------------------------------
+Prerequisites:
+- Node.js (v18.0.0 or higher recommended)
+- npm (v9.0.0 or higher)
+- Active MongoDB database URI (MongoDB Atlas or local mongod)
+- Hugging Face Access Token (from huggingface.co/settings/tokens)
+- USDA FoodData Central API Key (from fdc.nal.usda.gov)
+
+Step 1: Clone and Navigate
+  git clone https://github.com/themanjeetkr/AI-Integrated-Mental-Health-Journal.git
+  cd "AI mental Health care"
+
+Step 2: Start Backend Server
+  cd Backend
+  npm install
+  # Ensure .env is populated with credentials
+  npm run server
+  # Server will listen on http://localhost:5000
+
+Step 3: Start Frontend Client
+  # In a new terminal window:
+  cd Frontend
+  npm install
+  npm run dev
+  # Application will be accessible at http://localhost:5173
+
+================================================================================
+10. PRODUCTION DEPLOYMENT STRATEGY
+================================================================================
+
+FRONTEND DEPLOYMENT (e.g. Vercel, Netlify, Cloudflare Pages):
+1. Root Directory: `Frontend`
+2. Build Command: `npm run build`
+3. Output Directory: `dist`
+4. Environment Variables:
+   - `VITE_API_BASE_URL` = https://ai-integrated-mental-health-journal.onrender.com/api
+5. SPA Rewrite Rule:
+   Ensure all routes rewrite to `index.html` for React Router 7 compatibility.
+
+BACKEND DEPLOYMENT (e.g. Render, Railway, AWS EC2):
+1. Root Directory: `Backend`
+2. Build Command: `npm install`
+3. Start Command: `npm start`
+4. Environment Variables:
+   - `PORT` = 5000 (or platform assigned)
+   - `MONGO_URI` = your production MongoDB Atlas cluster URI
+   - `JWT_SECRET` = high-entropy 256-bit secret string
+   - `HUGGINGFACE_API_TOKEN` = Hugging Face production token
+   - `USDA_API_KEY` = USDA FoodData API key
+   - `RAZORPAY_KEY_ID` & `RAZORPAY_KEY_SECRET` = Live or test Razorpay keys
+
+DATABASE (MongoDB Atlas):
+- Network Access: Whitelist IP addresses of the hosting platform (or 0.0.0.0/0 with strict authentication).
+- Enable automated daily backups and index monitoring.
+
+================================================================================
+11. SUMMARY & CONCLUSION
+================================================================================
+
+WellSync is an innovative, production-grade holistic wellness solution that breaks
+down the artificial barrier between mental mindfulness and physical health.
+By pairing cutting-edge AI sentiment classification with natural-language 
+dietary tracking, robust data visualization, and an elegant dark-mode aesthetic, 
+the platform equips users with unprecedented clarity over their well-being.
+
+With a structured architectural foundation in place, the application is primed for
+rapid evolution into voice sentiment detection, wearable health synchronization,
+zero-knowledge encryption, and cross-platform mobile experiences.
+
+================================================================================
+                           END OF DOCUMENT
+================================================================================

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Moon, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Moon, Eye, EyeOff, Loader2, LockKeyhole, Mail, User, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Auth() {
@@ -9,7 +9,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const { login, register, loading } = useAuth();  // ← from context, no props
+  const { login, register, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,50 +20,62 @@ export default function Auth() {
     } else {
       ok = await register(name, email, password);
     }
-    if (ok) navigate("/dashboard");  // ← navigates after success
+    if (ok) navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-mesh flex items-center justify-center px-4">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-10 blur-3xl"
-          style={{ background: "radial-gradient(circle, #4e8c7c, transparent)" }} />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-10 blur-3xl"
-          style={{ background: "radial-gradient(circle, #d97c2e, transparent)" }} />
+    <div className="min-h-screen bg-premium flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* AMBIENT BACKGROUND GLOWS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-mint-400/15 blur-[140px] rounded-full" />
+        <div className="absolute -bottom-20 -left-20 w-[450px] h-[450px] bg-electric-500/15 blur-[130px] rounded-full" />
+        <div className="absolute -top-20 -right-20 w-[450px] h-[450px] bg-purple-500/10 blur-[130px] rounded-full" />
       </div>
 
-      <div className="w-full max-w-sm relative z-10">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-4"
-            style={{ background: "linear-gradient(135deg, #4e8c7c, #3d6b5e)" }}>
-            <Moon size={22} color="white" />
-          </div>
-          <h1 className="font-display text-3xl font-bold text-ink-100">
-            Mind<span className="text-gradient-sage">Scribe</span>
-          </h1>
-          <p className="text-sm text-ink-500 mt-1">Your AI-powered mental health journal</p>
+      <div className="w-full max-w-md relative z-10 space-y-6">
+        {/* Brand Header */}
+        <div className="text-center">
+          <button
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-3 mb-3 cursor-pointer focus:outline-none"
+          >
+            <div
+              className="w-11 h-11 rounded-2xl flex items-center justify-center border border-white/20 shadow-[0_8px_24px_rgba(52,211,153,0.35)]"
+              style={{ background: "linear-gradient(135deg, #34d399 0%, #059669 100%)" }}
+            >
+              <Moon size={22} className="text-[#04140e] fill-[#04140e]" />
+            </div>
+            <span className="font-display text-2xl font-bold tracking-tight text-white">
+              Mind<span className="text-gradient-luxe">Scribe</span>
+            </span>
+          </button>
+          <p className="text-xs text-ink-300 font-medium">
+            Your private space for mindful reflection & emotional clarity
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="rounded-2xl p-6"
+        {/* Auth Glass Card */}
+        <div
+          className="rounded-3xl p-7 sm:p-8 border border-white/10 backdrop-blur-2xl"
           style={{
-            background: "rgba(28,28,40,0.8)",
-            border: "1px solid rgba(255,255,255,0.07)",
-            backdropFilter: "blur(20px)",
-          }}>
-
+            background: "linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(15, 18, 27, 0.85)",
+            boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+          }}
+        >
           {/* Tab toggle */}
-          <div className="flex gap-1 p-1 rounded-xl mb-6"
-            style={{ background: "rgba(255,255,255,0.03)" }}>
+          <div className="flex gap-1 p-1 rounded-2xl mb-6 bg-white/[0.04] border border-white/[0.06]">
             {["login", "register"].map((m) => (
-              <button key={m} onClick={() => setMode(m)}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   mode === m
-                    ? "bg-sage-600/20 text-sage-300"
-                    : "text-ink-500 hover:text-ink-300"
-                }`}>
-                {m === "login" ? "Sign In" : "Sign Up"}
+                    ? "bg-mint-400/20 text-mint-300 shadow-[0_0_12px_rgba(52,211,153,0.2)] border border-mint-400/30"
+                    : "text-ink-400 hover:text-white"
+                }`}
+              >
+                {m === "login" ? "Sign In" : "Create Account"}
               </button>
             ))}
           </div>
@@ -71,45 +83,92 @@ export default function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <div>
-                <label className="block text-xs font-medium text-ink-500 mb-1.5">Name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name" required
-                  className="input-dark w-full px-4 py-2.5 rounded-xl text-sm" />
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Naina Kapoor"
+                    required
+                    className="input-dark pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm"
+                  />
+                </div>
               </div>
             )}
+
             <div>
-              <label className="block text-xs font-medium text-ink-500 mb-1.5">Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com" required
-                className="input-dark w-full px-4 py-2.5 rounded-xl text-sm" />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-ink-500 mb-1.5">Password</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
+                Email Address
+              </label>
               <div className="relative">
-                <input type={showPw ? "text" : "password"}
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••" required
-                  className="input-dark w-full px-4 pr-10 py-2.5 rounded-xl text-sm" />
-                <button type="button" onClick={() => setShowPw((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-500 hover:text-ink-300">
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@domain.com"
+                  required
+                  className="input-dark pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <LockKeyhole size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <input
+                  type={showPw ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="input-dark pl-10 pr-10 py-2.5 rounded-xl text-xs sm:text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-500 hover:text-white"
+                >
                   {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
-            <button type="submit" disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold btn-primary disabled:opacity-50">
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-premium w-full py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-[0_10px_30px_rgba(52,211,153,0.3)] disabled:opacity-50 mt-2"
+            >
               {loading && <Loader2 size={16} className="animate-spin" />}
-              {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
+              <span>{loading ? "Verifying..." : mode === "login" ? "Sign In to Journal" : "Start Your Free Journal"}</span>
+              {!loading && <ArrowRight size={15} />}
             </button>
           </form>
 
-          <p className="text-xs text-center text-ink-600 mt-4">
-            {mode === "login" ? "Don't have an account? " : "Already have an account? "}
-            <button onClick={() => setMode(mode === "login" ? "register" : "login")}
-              className="text-sage-400 hover:text-sage-300 transition-colors">
-              {mode === "login" ? "Sign up" : "Sign in"}
-            </button>
-          </p>
+          <div className="mt-5 pt-4 border-t border-white/[0.06] text-center">
+            <p className="text-xs text-ink-400">
+              {mode === "login" ? "Don't have an account yet? " : "Already have an account? "}
+              <button
+                type="button"
+                onClick={() => setMode(mode === "login" ? "register" : "login")}
+                className="text-mint-300 font-bold hover:underline ml-1"
+              >
+                {mode === "login" ? "Sign up now" : "Sign in here"}
+              </button>
+            </p>
+          </div>
+        </div>
+
+        {/* Security badge footer */}
+        <div className="flex items-center justify-center gap-2 text-xs text-ink-500">
+          <ShieldCheck size={14} className="text-mint-400" />
+          <span>Client-Side Encryption • Zero Data Harvesting</span>
         </div>
       </div>
     </div>
