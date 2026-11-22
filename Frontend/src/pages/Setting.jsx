@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { User, Lock, Bell, Palette, Save, Loader2, Sparkles, ShieldCheck } from "lucide-react";
+import { createElement, useState } from "react";
+import { User, Lock, Bell, Palette, Save, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 
-function Section({ icon: Icon, title, children }) {
+function Section({ icon, title, children }) {
   return (
     <div
       className="rounded-3xl overflow-hidden mb-6 border border-white/10 backdrop-blur-xl"
@@ -18,7 +18,7 @@ function Section({ icon: Icon, title, children }) {
           className="w-8 h-8 rounded-xl flex items-center justify-center border border-mint-400/20"
           style={{ background: "rgba(52, 211, 153, 0.12)" }}
         >
-          <Icon size={16} className="text-mint-300" />
+          {icon && createElement(icon, { size: 16, className: "text-mint-300" })}
         </div>
         <h3 className="font-display font-bold text-white text-base">{title}</h3>
       </div>
@@ -27,22 +27,9 @@ function Section({ icon: Icon, title, children }) {
   );
 }
 
-export default function Settings() {
-  const { user, loading, updateProfile, updatePassword } = useAuth();
+function ProfileForm({ user, loading, updateProfile }) {
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [notifs, setNotifs] = useState({
-    daily: true,
-    insights: true,
-    weekly: false,
-  });
-
-  useEffect(() => {
-    setName(user?.name || "");
-    setEmail(user?.email || "");
-  }, [user]);
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -52,8 +39,53 @@ export default function Settings() {
       return;
     }
 
-    await updateProfile({ name, email });
+    await updateProfile({ name: name.trim(), email: email.trim() });
   };
+
+  return (
+    <form onSubmit={handleSaveProfile} className="space-y-4">
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
+          Full Name
+        </label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="input-dark w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm bg-white/[0.04]"
+        />
+      </div>
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
+          Email Address
+        </label>
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          className="input-dark w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm bg-white/[0.04]"
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn-premium py-2.5 px-5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer disabled:opacity-60 shadow-[0_8px_20px_rgba(52,211,153,0.25)]"
+      >
+        {loading ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+        <span>Save Profile Changes</span>
+      </button>
+    </form>
+  );
+}
+
+export default function Settings() {
+  const { user, loading, updateProfile, updatePassword } = useAuth();
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [notifs, setNotifs] = useState({
+    daily: true,
+    insights: true,
+    weekly: false,
+  });
 
   const handleSavePassword = async (e) => {
     e.preventDefault();
@@ -78,37 +110,12 @@ export default function Settings() {
     <DashboardLayout title="Account Settings">
       <div className="max-w-2xl mx-auto space-y-6">
         <Section icon={User} title="Personal Profile">
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
-                Full Name
-              </label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="input-dark w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm bg-white/[0.04]"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-ink-400 mb-1.5">
-                Email Address
-              </label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                className="input-dark w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm bg-white/[0.04]"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-premium py-2.5 px-5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer disabled:opacity-60 shadow-[0_8px_20px_rgba(52,211,153,0.25)]"
-            >
-              {loading ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-              <span>Save Profile Changes</span>
-            </button>
-          </form>
+          <ProfileForm
+            key={user?._id || user?.email || "profile"}
+            user={user}
+            loading={loading}
+            updateProfile={updateProfile}
+          />
         </Section>
 
         <Section icon={Lock} title="Password & Security">
