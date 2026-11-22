@@ -5,6 +5,8 @@ const loginLimiter = require("../middlewares/loginLimiter");
 const {
   registerUser,
   login,
+  refreshToken,
+  logout,
   updateProfile,
   updatePassword,
 } = require("../controllers/authController.js");

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 import {
   loginUser,
   registerUser,
+  logoutRequest,
   updatePasswordRequest,
   updateProfileRequest,
 } from "../services/api";
@@ -19,12 +20,16 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const data = await loginUser({ email, password }); // ← no { data } destructure
-      if (!data.token) {
+      const data = await loginUser({ email, password });
+      const authToken = data.accessToken || data.token;
+      if (!authToken) {
         toast.error(data.message || "Login failed");
         return false;
       }
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", authToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
       localStorage.setItem("user", JSON.stringify(data.user || { email }));
       setUser(data.user || { email });
       toast.success("Welcome back!");
@@ -40,12 +45,16 @@ export function AuthProvider({ children }) {
   const register = async (name, email, password) => {
     setLoading(true);
     try {
-      const data = await registerUser({ name, email, password }); // ← no { data } destructure
-      if (!data.token) {
+      const data = await registerUser({ name, email, password });
+      const authToken = data.accessToken || data.token;
+      if (!authToken) {
         toast.error(data.message || "Registration failed");
         return false;
       }
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", authToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
       localStorage.setItem("user", JSON.stringify(data.user || { name, email }));
       setUser(data.user || { name, email });
       toast.success("Account created!");
@@ -58,11 +67,19 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    toast.success("Logged out");
+  const logout = async () => {
+    try {
+      const storedRefreshToken = localStorage.getItem("refreshToken");
+      await logoutRequest(storedRefreshToken);
+    } catch (e) {
+      // ignore network errors on logout
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      setUser(null);
+      toast.success("Logged out");
+    }
   };
 
   const updateProfile = async (profileData) => {

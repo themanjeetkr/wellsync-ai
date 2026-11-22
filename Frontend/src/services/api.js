@@ -32,16 +32,105 @@ const normalizeApiBaseUrl = () => {
 
 const BASE_URL = normalizeApiBaseUrl();
 
-const getAuthHeaders = (token) => ({
-  Authorization: `Bearer ${token}`,
-});
+const getAuthHeaders = (token) => {
+  const currentToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
+  return currentToken ? { Authorization: `Bearer ${currentToken}` } : {};
+};
+
+// Auto refresh session helper
+export const refreshSession = async () => {
+  try {
+    const storedRefreshToken =
+      typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
+    const res = await fetch(`${BASE_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ refreshToken: storedRefreshToken }),
+    });
+
+    if (!res.ok) {
+      return null;
+    }
+
+    const data = await res.json();
+    const newAccessToken = data.accessToken || data.token;
+    if (newAccessToken && typeof window !== "undefined") {
+      localStorage.setItem("token", newAccessToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
+      return newAccessToken;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+// Custom fetch wrapper with automatic token refresh on 401
+export const authFetch = async (url, options = {}) => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const mergedHeaders = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers || {}),
+  };
+
+  let res = await fetch(url, {
+    ...options,
+    credentials: "include",
+    headers: mergedHeaders,
+  });
+
+  if (res.status === 401 && !options._retry) {
+    const newToken = await refreshSession();
+    if (newToken) {
+      const retryHeaders = {
+        ...options.headers,
+        Authorization: `Bearer ${newToken}`,
+      };
+      res = await fetch(url, {
+        ...options,
+        _retry: true,
+        credentials: "include",
+        headers: retryHeaders,
+      });
+    }
+  }
+
+  return res;
+};
+
+// Configure axios interceptor for token refresh
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      const newToken = await refreshSession();
+      if (newToken) {
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return axios(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // ---------------- AUTH ----------------
 export const loginUser = async (data) => {
   const res = await fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    credentials: "include",
+    body: JSON.stringify(data),
   });
   return res.json();
 };
@@ -50,90 +139,115 @@ export const registerUser = async (data) => {
   const res = await fetch(`${BASE_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    credentials: "include",
+    body: JSON.stringify(data),
   });
   return res.json();
 };
 
+export const refreshTokenRequest = async (refreshToken) => {
+  const res = await fetch(`${BASE_URL}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ refreshToken }),
+  });
+  return res.json();
+};
+
+export const logoutRequest = async (refreshToken) => {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/logout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ refreshToken }),
+    });
+    return res.json();
+  } catch (error) {
+    return { message: "Logged out" };
+  }
+};
+
 export const updateProfileRequest = async (data, token) => {
-  const res = await fetch(`${BASE_URL}/auth/profile`, {
+  const res = await authFetch(`${BASE_URL}/auth/profile`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
   return res.json();
 };
 
 export const updatePasswordRequest = async (data, token) => {
-  const res = await fetch(`${BASE_URL}/auth/password`, {
+  const res = await authFetch(`${BASE_URL}/auth/password`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
   return res.json();
 };
 
 // ---------------- JOURNALS ----------------
 export const getJournals = async (token) => {
-  const res = await fetch(`${BASE_URL}/journals`, {
-    headers: { Authorization: `Bearer ${token}` }
+  const res = await authFetch(`${BASE_URL}/journals`, {
+    headers: getAuthHeaders(token),
   });
   return res.json();
 };
 
 export const getJournalById = async (id, token) => {
-  const res = await fetch(`${BASE_URL}/journals/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
+  const res = await authFetch(`${BASE_URL}/journals/${id}`, {
+    headers: getAuthHeaders(token),
   });
   return res.json();
 };
 
 export const createJournal = async (data, token) => {
-  const res = await fetch(`${BASE_URL}/journals`, {
+  const res = await authFetch(`${BASE_URL}/journals`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      ...getAuthHeaders(token),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
   return res.json();
 };
 
 export const updateJournal = async (id, data, token) => {
-  const res = await fetch(`${BASE_URL}/journals/${id}`, {
+  const res = await authFetch(`${BASE_URL}/journals/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      ...getAuthHeaders(token),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
   return res.json();
 };
 
 export const deleteJournal = async (id, token) => {
-  const res = await fetch(`${BASE_URL}/journals/${id}`, {
+  const res = await authFetch(`${BASE_URL}/journals/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` }
+    headers: getAuthHeaders(token),
   });
   return res.json();
 };
 
 export const getJournalSuggestions = async (data, token) => {
-  const res = await fetch(`${BASE_URL}/journals/suggest`, {
+  const res = await authFetch(`${BASE_URL}/journals/suggest`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      ...getAuthHeaders(token),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 
   if (!res.ok) {
@@ -146,8 +260,8 @@ export const getJournalSuggestions = async (data, token) => {
 
 // ---------------- ANALYTICS ----------------
 export const getEmotionStats = async (token) => {
-  const res = await fetch(`${BASE_URL}/journals/stats/emotions`, {
-    headers: { Authorization: `Bearer ${token}` }
+  const res = await authFetch(`${BASE_URL}/journals/stats/emotions`, {
+    headers: getAuthHeaders(token),
   });
   return res.json();
 };

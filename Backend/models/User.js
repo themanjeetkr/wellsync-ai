@@ -11,7 +11,11 @@ const userSchema=new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true}
-
-    }, {timestamps:true})
+        required:true
+    },
+    refreshToken:{
+        type:String,
+        default:null
+    }
+}, {timestamps:true})
 module.exports=mongoose.model("User",userSchema)
